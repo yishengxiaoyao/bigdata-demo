@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+
+
+<property>
+        <name>javax.jdo.option.ConnectionURL</name>
+                <value>jdbc:mysql://localhost:3306/xiaoyao?createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8</value>
+                </property>
+
+<property>
+      <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>com.mysql.jdbc.Driver</value>
+        </property>
+
+<property>
+  <name>javax.jdo.option.ConnectionUserName</name>
+    <value>root</value>
+    </property>
+
+<property>
+  <name>javax.jdo.option.ConnectionPassword</name>
+    <value>123456</value>
+    </property>
+
+<property>
+<name>hive.cli.print.current.db</name>
+<value>true</value>
+</property>
+<!--<property>
+<name>mapreduce.output.fileoutputformat.compress</name>
+<value>true</value>
+</property>
+<property>
+<name>mapreduce.output.fileoutputformat.compress.codec</name>
+<value>com.hadoop.compression.lzo.LzoCodec</value>
+</property>
+<property>
+<name>hive.exec.compress.output</name>
+<value>true</value>
+</property>
+<property>
+<name>mapreduce.output.fileoutputformat.compress</name>
+<value>true</value>
+</property>-->
+</configuration>

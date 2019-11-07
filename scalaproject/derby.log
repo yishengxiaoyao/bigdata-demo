@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sun Jan 06 22:42:01 CST 2019:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-0168-239d-0a6e-00000b836140 
+on database directory /Users/renren/IdeaProjects/scalaproject/metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@48284d0e 
+Loaded from file:/Users/renren/.m2/repository/org/apache/derby/derby/10.10.2.0/derby-10.10.2.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_191-b12
+user.dir=/Users/renren/IdeaProjects/scalaproject
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.13.6
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
