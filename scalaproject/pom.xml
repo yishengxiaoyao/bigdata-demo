@@ -19,6 +19,7 @@
     <hbase.version>2.1.3</hbase.version>
     <jedis.version>3.0.1</jedis.version>
     <rediscala.version>1.8.0</rediscala.version>
+    <flink.version>1.9.1</flink.version>
   </properties>
 
   <repositories>
@@ -227,6 +228,20 @@
       <groupId>com.typesafe</groupId>
       <artifactId>config</artifactId>
       <version>1.3.3</version>
+    </dependency>
+
+    <!--flink dependecy-->
+
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-streaming-scala_2.11</artifactId>
+      <version>${flink.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-scala_2.11</artifactId>
+      <version>${flink.version}</version>
     </dependency>
 
   </dependencies>
