@@ -17,3 +17,6 @@ StatefulSet控制器的主要作用:使用Pod模版创建Pod的时候，对他�
 StatefulSet就保证了Pod网络标识的稳定性。但是IP会发生变化，如果访问的时候，需要使用DNS记录或者hostname的方式来访问。
 
 Kubernetes成功地将Pod的拓扑状态(那个节点先启动，那个节点后启动)，按照Pod的名字+编码的方式固定下来了。
+
+
+## 存储状态
