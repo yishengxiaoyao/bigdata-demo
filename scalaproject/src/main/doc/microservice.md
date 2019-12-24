@@ -249,3 +249,112 @@ Zookeeper的工作原理:
 >* FailBack:失败通知。服务消费者调用失败或者超时后，不在重试，根据失败原因决定后面的策略。
 >* FaileCache:失败缓存。服务消费者调用失败或者超时后，而一段时间后再次尝试发起调用。
 >* FailFast:快速失败。服务消费者调用失败后，不在重试。
+
+## 开源服务注册中心如何选型
+当下主流的服务注册与发现的解决方案，主要有两种:
+>* 应用内注册与发现:注册中心提供服务端和客户端的SDK，业务应用通过引用注册中心提供的SDK，痛殴SDK与注册中心交互，来实现服务的注册和发现。
+>* 应用外注册与发现:业务应用本身不需要通过SDK与注册中心打交道，而是通过其他方式与注册中心交互，间接完成服务注册与发现。
+
+### 两种典型的注册中心实现
+#### Eureka(应用内)
+>* Eureka Server:注册中心的服务端，实现了服务信息注册、存储以及查询等功能。
+>* 服务端的Eureka Client:集成在服务端的注册中心SDK，服务提供者通过调用SDK，实现服务注册、反注册等功能。
+>* 客户端的Eureka Client:集成在客户端的注册中心SDK，服务消费者通过调用SDK，实现服务订阅、消费更新等功能。
+#### Consul(应用外)
+>* Consul：注册中心的服务端，实现服务注册信息的存储，并提供注册和发现服务。
+>* Registrator:通过监听服务部署的Docker实例是否存活，来负责服务提供者的注册和销毁。
+>* Consul Template:定时从注册中心服务端获取最新的服务提供者节点列表并刷新LB配置，
+这样消费者就通过访问nginx就可以获取最新的服务提供者信息。
+
+应用内的解决方案一般适用于服务提供者和服务消费者同属于一个技术体系；
+应用外的解决方案一般适合服务提供者和消费者采用不同的技术体系的业务场景。
+
+### 注册中心选型要考虑的两个问题
+>* 高可用:集群部署(通过部署多个实例组成集群来保证高可用性);多IDC部署(部署在不止一个机房)。
+>* 数据一致性:C(Consistency，一致性)、A(可用性)、P(Partition Tolerance分区容错性)。出现网络故障，导致整个网络被分成了
+互不连通的区域，这就叫做分区，一旦出现分区，一个区域内的节点就没法访问其他节点上的数据，最好的方法是把数据复制到其他区域内的节点，
+这样即使把数据复制到其他区域内的节点，这样即使出现分区，也能访问任意区域内节点上的数据，这就是分区容错性。把数据复制到多个节点
+就可能出现数据不一致的情况，这就是一致性。要保证一致，必须等待所有节点上的数据都更新成功才可用，这就是可用性。
+
+
+数据节点越多，分区容错性越高，但数据一致性越难保证。为了保证数据一致性，又会带来可用性的问题。
+
+根据CAP不能同时满足，所以不同的注册中心解决方案选择的方向不同，大致分为两种:
+>* CP型注册中心:牺牲可用性来保证数据抢一致性(Zookeeper,etcd,Consul)。Zookeeper集群内只有一个Leader，使用Paxos算法选举出来。
+Leader的目的是保证写信息的时候只向这个Leader写入，Leader会同步信息到Follower是，这个过程保证数据一致性。如果多个Zookeeper之间
+出现网络问题,发生脑裂的话，注册中心就不可用了。etcd和Consul集群内都是通过raft协议来拨正一致性，如果出现脑裂的话，注册中心也不可用。
+>* AP型注册中心:牺牲一致性来博阿政可用性。Eureka不用选举一个Leader，每个Eureka服务器单独保存服务器注册地址，因为有可能出现信息不一致的信息。
+
+## 如何RPC选型
+### Dubbo
+Dubbo默认使用Netty作为通信框架；Dubbo除了支持私有的Dubbo协议，还支持RMI协议、Hession协议、HTTP协议、Thrift协议等；Dubbo支持多种序列化格式，
+例如Dubbo、Hession、JSON、Kryo、FST等。
+
+### Spring Cloud
+请求经过Spring Cloud的过程:
+>* 请求统一通过API网关Zuul来访问内部服务，先经过Token进行安全认证。
+>* 通过安全认证后，网关Zuul从注册中心Eureka获取可用服务节点列表。
+>* 从可用服务节点选取一个可用节点，然后把请求发送到这个节点。
+>* 整个请求过程中，Hystrix组件负责处理服务超时熔断，Turbine组件负责监控服务间的调用和熔断相关指标，Sleuth组件负责调用链监控，ELK负责日志分析。
+
+### gRPC
+gRPC的原理是通过IDL文件定义服务接口的参数和返回值类型，然后通过代码生成服务端和客户端的具体实现代码。
+gRPC的特性:
+>* 通信采用HTTP/2,因为HTTP/2提供了连接复用、双向流、服务器推送、请求优先级等机制，所以可以节省带宽、降低TCP连接次数、节省CPU。
+>* IDL使用ProtoBuf，ProtoBuf压缩和传输效率极高，语法也简单。
+>* 多语言支持，能够基于多种语言自动生成对应语言的客户端和服务端的代码。
+
+## 如何搭建一个可靠的监控系统
+### ELK
+>* Logstash:负责数据收集和传输，支持动态地从各种数据源收集数据，并对数据进行过滤、分析、格式化等，然后存储到指定的位置。
+>* ElasticSearch:负责数据处理，它是一个开源分布式搜索和分析引擎，具有可伸缩、高可靠和易管理等特点，基于ApacheLucence构建，能对大容量的
+数据进行接近实时的存储、搜索和分析操作，通常被用作基础搜索引擎。
+>* Kibana:负责数据展示，也是一个开源和免费的工具。
+
+Logstash从不同的数据源手机数据，所以比较消耗CPU和内存资源，造成服务器性能下降，后来，Beats出现，Beats所占系统的CPU和内存几乎忽略不计，
+Beats可以从成百上千或者成千上完台机器向Logstash或者直接向ElasticSearch发送数据。
+
+Beats支持多种数据源:
+>* Packetbeat:用来收集网络流量数据。
+>* Topbeat:用来收集系统、进程的CPU和内存使用情况等数据。
+>* FileBeat:用来收集文件数据。
+>* Winlogbeat:用来收集Windows事件日志数据。
+
+### Graphite
+Graphite主要包含Carbon(负责数据处理)、Whisper(数据存储)、Graphite-Web(数据展示)，可以接入StatsD。
+
+>* Carbon:主要作用是接收被监视节点的连接，收集各个指标的数据，将这些数据写入carbon-cache并最终持久化到Whisper存储文件中去。
+>* Whisper:一个时序数据库，主要作用是存储时间序列数据。
+>* Graphiter-Web:数据展示。Carbon将数据写入Whisper存储的同时，会在carbon-cache中同时写入，Graphite-web会先查询carbon-cache，如果没有，在查询Whispher存储。
+
+### TICK
+TICK 是Telegraf(负责数据收集)、InfluxDB(数据存储)、Chronograf(数据展示)、Kapacitor(数据告警)四个软件首字母的速写，由InfluxData开发的一套开源监控工具栈。
+
+### Prometheus
+Prometheus的主要组件:
+>* Prometheus Server:用于拉取metrics信息并将数据存储在时间序列数据库。
+>* Job/Exporters:用于暴露已有的第三方服务的metrics给PrometheusServer，负责数据收集。
+>* PushGateWay:主要用于短期jobs。
+>* Alertmanager:用于数据报警。
+>* Prometheus Web UI:负责数据展示。
+
+Prometheus工作流程:
+>* Prometheus Server定期从配置好的jobs或者Exporters中读取metrics信息，或者接收来自Pushgateway发过来的metrics信息。
+>* Prometheus Server把收集到的metrics信息存储到时间序列数据库中，并运行已经定义好的alert.rules，向Alertmanager推送警报。
+>* Alertmanager根据配置文件，对接收的警报进行处理，发出告警。
+>* 通过Prometheus Web UI进行可视化展示。
+
+### 监控比较
+| |ELK|Graphite|TICK|Prometheus|
+|----|----|----|----|----|
+|收集数据|Beats代理来采集数据|需要配合使用开源数据采集组件|Telegraf作为数据采集组件|通过jobs/exporters组件来获取statsd等采集过来的metrics|
+|数据传输|Beats收集数据后传输给Logstash(推)|Graphite将收集的数据传递给Carbon(推)|将收集的数据传递给InfluxDB(推)|Prometheus自己从jobs/exporters中拉取|
+|数据处理|可以对日志的任意字段索引，适合多维度的数据查询|支持正则匹配、sumSeries求和等函数|InfluxQL，对监控数据进行复杂操作|PromQL，查询|
+|数据展示|Kibana，只支持ES|Grafana|Grafana|Grafana|
+
+
+## 参考文献
+[Graphite Documentation](https://graphite.readthedocs.io/en/latest/index.html)
+[https://github.com/graphite-project/graphite-web](https://github.com/graphite-project/graphite-web)
+[influxdata](https://www.influxdata.com/time-series-platform/)
+[prometheus](https://prometheus.io/)
