@@ -352,6 +352,38 @@ Prometheus工作流程:
 |数据处理|可以对日志的任意字段索引，适合多维度的数据查询|支持正则匹配、sumSeries求和等函数|InfluxQL，对监控数据进行复杂操作|PromQL，查询|
 |数据展示|Kibana，只支持ES|Grafana|Grafana|Grafana|
 
+## 服务追踪系统
+
+服务追踪系统的实现，主要包括三个部分:
+>* 埋点数据收集:负责在服务端进行埋点，来收集服务调用的上下文数据。
+>* 实时数据处理:负责对收集到的链路信息，按照traceid和spanid进行串联和存储。
+>* 数据链路展示:把处理后的服务调用数据，按照调用脸的形式展示出来。
+
+### OpenZipkin
+OpenZipkin是Twitter开源的服务追踪系统。
+
+OpenZipkin主要有四个核心部分组成:
+>* Collector:负责收集探针Reporter埋点采集的数据，经过验证处理并建立索引。
+>* Storage:存储服务调用的链路数据，默认使用的是Cassandra。
+>* API:将格式化和建立索引的链路数据以API的方式对外提供服务。
+>* UI:以图形化的方式展示服务调用的链路数据。
+
+
+### Pinpoint
+Pinpoint是Naver开源的一款深度支持Java语言的服务追踪系统。
+
+Pinpoint的组成:
+>* PinPoint Agent:通过Java字节码注入的方式，来收集JVM中的调用数据，通过UDP协议传递给Collector,数据采用Thrift协议进行编码。
+>* PinPoint Collector:收集Agent传过来的数据，然后写到HBase Storage，Rowkey是traceId，SpanId和pSpanId都是列。
+>* HBase Storage:采用HBase集群存储服务调用的链路信息。
+>* PinPoint Web UI:通过web ui展示服务调用的详细链路信息。
+
+### OpenZipkin vs PinPoint
+| |OpenZipkin|PinPoint|
+|----|----|----|
+|埋点探针支持平台的广泛性|提供不同语言的Library|只支持Java语言|
+|系统集成难易程度|OpenZipkin的Java探针Brave，只提供了基本的操作API，<br/>需要手动添加响应的配置文件并且增加trace业务代码|通过字节码注入的方式来实现拦截服务，从而收集trace信息,JVM加载class二进制文件时，动态修改加载的class文件，在方法前后执行拦截器的before和after方法，记录trace信息|
+|调用链路数据的精确度|只能看到接口级别信息，只能绘制服务与服务之间的调用链路拓扑|字节码注入的方式实现trace信息收集，可以看到接口级别的链路调用信息，还可以看到调用所关联的数据库信息，绘制服务与服务之间的调用链路拓扑，绘制与DB之间的调用链路拓扑图|
 
 ## 参考文献
 [Graphite Documentation](https://graphite.readthedocs.io/en/latest/index.html)
