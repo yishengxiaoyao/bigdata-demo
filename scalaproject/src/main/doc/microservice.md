@@ -401,6 +401,10 @@ hystrix通过滑动窗口来对数据进行统计，默认情况下，滑动窗�
 Spring Cloud Config只支持Java语言，配置存储在git中，变更配置也需要通过git操作，如果配置中心有配置变更，需要手动刷新。
 Disconf:只支持Java，基于Zookeeper来实现配置变更实时推送给订阅的客户端，并通过界面统一管理。 
 
+
+
+
+
 ## 参考文献
 [Graphite Documentation](https://graphite.readthedocs.io/en/latest/index.html)
 [https://github.com/graphite-project/graphite-web](https://github.com/graphite-project/graphite-web)
