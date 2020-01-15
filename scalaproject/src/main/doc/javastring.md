@@ -46,6 +46,8 @@ String.indexOf()(也可以使用String.charAt())和String.substring()结合替�
 ### String的长度限制
 在编译时，String的长度不能超过65535，在运行时不能超过Integer.MAX_VALUE。
 
+## String vs StringBuilder
+String 与StringBuilder的另一个区别在于当实例化String时,String可以利用构造函数、赋值的方式来初始化;StringBuilder只能通过构造函数来初始化。
 
 ## 参考文献
 [Java字符串性能优化](https://blog.csdn.net/weixin_37948888/article/details/97815980)
