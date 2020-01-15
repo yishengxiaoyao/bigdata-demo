@@ -180,4 +180,3 @@ list在遍历删除元素时，需要使用iterator进行遍历删除。对CopyO
 [Java集合框架之ArrayList、LinkedList的区别（四）](https://blog.csdn.net/hzw2017/article/details/80375035)
 [源码浅析ArrayList、LinkedList和Vector的区别](https://blog.csdn.net/u012814441/article/details/80671604)
 [美团试题：ArrayList和linkedlist有什么区别，如何遍历，使用for循环遍历linkedlist为什么效率低，linkedlist能使用索引访问么，使用迭代器呢](https://blog.csdn.net/qq_36520235/article/details/82535044)
-LinkedList可以实现栈、队列以及双端队列。
