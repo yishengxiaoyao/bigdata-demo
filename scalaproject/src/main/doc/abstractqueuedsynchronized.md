@@ -1,4 +1,30 @@
 # AbstractQueuedSynchronized源码剖析
+AbstractQueuedSynchronized是一个抽象同步框架,用来实现一个依赖状态的同步锁。
+## AbstractQueuedSynchronized具备特性
+>* 阻塞等待队列
+>* 共享/独占
+>* 公平/非公平
+>* 可重入
+>* 允许终端
+
+JVM提供了synchronized(内置锁)关键字,保证并发安全
+Java实现的AbstractQueuedSynchronized。
+
+Java代码实现的锁都是显示锁
+
+JUC分类:
+>* locks部分:显示锁(互斥锁和读写锁)相关;
+>* atmoic部分:原子变量类相关,是构建非阻塞算法的基础;
+>* executor部分:线程池相关;
+>* collections部分:并发容器相关
+>* tools:同步工具相关,例如信号量、闭锁、栅栏等功能
+
+synchronized是可重入的锁,针对对象进行加锁。
+
+AQS:
+
+
+
 AbstractQueuedSynchronized继承自AbstractOwnableSynchronizer。
 AbstractOwnableSynchronizer 有一段描述:
 ```
@@ -80,3 +106,5 @@ static final class Node {
     }
 }
 ```
+
+
