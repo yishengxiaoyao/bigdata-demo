@@ -142,6 +142,11 @@ protected final boolean tryRelease(int releases) {
 
 
 
+
+
+## 自旋锁
+
+
 ## 代码
 ```
 public class LockTemplate {
