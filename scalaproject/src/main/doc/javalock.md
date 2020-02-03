@@ -176,27 +176,7 @@ void lock_notify(){
 
 
 
-## Node类
-//标记节点为共享模式
-static final Node SHARED = new Node();
-//标记节点为独占模式
-static final Node EXCLUSIVE = null;
-//在同步队列中等待的线程等待超时或者被终端,需要从同步队列中取消等待
-static final int CANCELLED = 1;
-//后继节点处于等待状态,而当前的节点如果释放了同步状态或者取消,将会通知后继节点,使得后继节点的线程得以运行。
-static final int SIGNAL = -1;
-//节点在等待队列中,节点的线程等待在Condition上,当其他线程对Condition调用了signal()方法后,该节点会从等待队列中移动到同步队列中,加入到同步状态的获取
-static final int CONDIDITION = -2;
-//表示下一次共享同步状态将会被无条件地传播下去
-static final int PROPAGATE = -3;
-//标记当前节点的信号量状态,只能是(1,0,-1,-2,-3)的一种状态;使用CAS更改状态,volatile可以保证线程可见性,高并发场景下,即使一个线程修改之后,状态立马就会被其他线程看到
-volatile int waitStatus;
-//前驱节点,当前节点加入到同步队列中被设置
-volatile Node prev;
-//后继节点
-volatile Node next;
-//节点同步状态的线程。
-volatile Thread thread;
+
 
 
 ## CLH队列
