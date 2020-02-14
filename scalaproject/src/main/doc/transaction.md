@@ -37,3 +37,14 @@ MySQL的事务启动方式如下:
 有些客户端默认关闭自动提交,需要显示设置 set autocommit=1。
 
 为了减少频繁提交事务的时间,可以使用commit work and chain,在提交事务并启动下一个事务。
+
+启动事务的方式:
+>* begin/start transaction 命令并不是一个事务的起点,在执行到它们之后的第一个操作InnoDB表的语句,事务才真正启动。一致性视图是在执行第一个快照读语句时创建的。
+>* 使用start transaction with consistent snapshot这个命令可以直接启动。一致性视图是在执行start transaction with consitent snapshot时创建的。
+
+在MySQL中有两个视图的概念:
+>* 一个是view。它是一个用查询语句定义的虚拟表,在调用的时候执行查询语句并生成结果。
+>* 另一个是InnoDB在实现MVVC时用到的一致性读视图,即consistent read view，用于支持RC(Read Committed,读提交)和RR(Repeated Read,可重复读)隔离级别的实现。
+
+InnoDB里面每个事务有一个唯一的事务ID,叫做transaction id。它是在事务开始的时候向InnoDB的事务系统申请的,是按照申请顺序严格递增的。
+每行数据也都是有多个版本的。每次事务更新数据的时候,都会生成一个新的数据版本，并且把transaction id赋值给这个数据版本的事务ID，记为trow trx_id。每个版本有自己的row trx_id。
