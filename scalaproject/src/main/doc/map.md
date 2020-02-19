@@ -169,7 +169,7 @@ put方法执行过程:
 
 
 #### loadFactor的作用
-loadFactor表示HashMap的拥挤成都,影响hash操作到同一个数组位置的概率。
+loadFactor表示HashMap的拥挤程度,影响hash操作到同一个数组位置的概率。
 
 #### 平时在使用HashMap时一般使用什么类型的元素作为key？
 选择Integer,String这种不可变的类型。作为不可变类天生是线程安全的。

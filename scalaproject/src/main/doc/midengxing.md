@@ -45,6 +45,8 @@ insert使用唯一索引 update使用 乐观锁 version版本法
 >* 在数据库中设置唯一索引,如果再次插入，就会报错。
 >* 通过redis保证一个唯一值,在插入数据的时候，进行判断，如果存在，就不能插入。
 
+
+
 ## 参考文献
 [每秒上万并发下的Spring Cloud参数优化实战](https://mp.weixin.qq.com/s/nVfcL0G9rd5qjYgvp-9MzA)
 [8 种方案解决重复提交问题！你选择哪一种呀？](https://mp.weixin.qq.com/s/LxqbJLMxazFetn-q-v-N5w)
