@@ -557,6 +557,180 @@ guava RateLimiter 来限流
 
 ## 牙膏 参半小太阳鱼子酱牙膏120 * 2
 
+在Java的对象初始化过程中，一个实例变量最多可以被初始化4次。
+
+## 多生产者 多消费者问题
+
+if 判断一次会产生虚假唤醒
+```
+public synchronized void increment() throws InterruptedException {
+    if (count != 0){
+        this.wait();
+    }
+    count++;
+    this.notifyAll();
+}
+```
+while 可以避免虚假唤醒
+```
+public synchronized void increment() throws InterruptedException {
+    while (count != 0){
+        this.wait();
+    }
+    count++;
+    this.notifyAll();
+}
+```
+
+## CopyOnWriteArrayList
+```
+List<String> result = new ArrayList<>();
+for (int i = 0;i < 10;i++){
+       new Thread(()->{
+           result.add(UUID.randomUUID().toString().substring(0,5));
+           System.out.println(result);
+       },String.valueOf(i)).start();
+   }
+```
+上面的代码会出现ConcurrentModificationException异常。
+解决方法:
+```
+List<String> a = new Vector<>();
+List<String> b = Collections.synchronizedList(new ArrayList<>());
+List<String> c = new CopyOnWriteArrayList<>();
+```
+copyonwrite 写时复制，在写入的时候避免覆盖，避免造成数据丢失。
+读写分离:写入的时候复制一份，写完更换指针
+
+CopyOnWriteArrayList vs Vector:
+CopyOnWriteArrayList 使用的Lock来保证线程安全 Vector使用的是synchronized来保证线程安全。
+
+
+## CopyOnWriteArraySet
+```
+Set<String> a = Collections.synchronizedSet(new HashSet<>());
+Set<String> b = new CopyOnWriteArraySet<>();
+```
+CopyOnWriteArraySet可以保证在多线程下set的安全
+HashSet的底层结构为HashMap,
+
+## Map
+Map是不安全的
+
+## Callable
+可以抛出异常、可以有返回值、执行call方法
+
+```
+class CustomCallable implements Callable<Integer>{
+    @Override
+    public Integer call() throws Exception {
+        return 23423;
+    }
+}
+//调用方法
+CustomCallable customCallable = new CustomCallable();
+FutureTask<Integer> futureTask = new FutureTask<>(customCallable);
+new Thread(futureTask).start();
+System.out.println(futureTask.get());
+```
+get方法会阻塞，结果有缓存。
+
+## BlockingQueue
+|方法类型|抛出异常|返回值|阻塞|超时|
+|----|----|----|----|----|
+|插入|add()|offer()|put(e)|offer(time,unit)|
+|移除|remove()|poll()|take()|poll(time,unit)|
+|检查|element()|peek()|不可用|不可用|
+
+
+Java 中的阻塞队列
+>* ArrayBlockingQueue :由数组结构组成的有界阻塞队列。
+>* LinkedBlockingQueue :由链表结构组成的有界阻塞队列。
+>* PriorityBlockingQueue :支持优先级排序的无界阻塞队列。
+>* DelayQueue:使用优先级队列实现的无界阻塞队列。
+>* SynchronousQueue:不存储元素的阻塞队列。
+>* LinkedTransferQueue:由链表结构组成的无界阻塞队列。
+>* LinkedBlockingDeque:由链表结构组成的双向阻塞队列
+
+
+## 线程池
+CPU密集型:Runtime.getRuntime().availableProcessors();//获取CPU核数,可以保持CPU效率最高
+IO密集型:判断你程序中耗IO的操作,大于其线程数就可以。
+
+## 函数式接口
+函数式接口:只有一个方法的接口
+
+Function: 有一个输入,有一个输出:对元素做一些处理。apply方法
+
+Predicate: 一个输入参数,返回值只能是布尔值,用来判断是否符合要求。test方法
+
+Consumer: 只有输入,没有输出,做一些不需要有返回值的判断。accept方法
+
+Supplier: 没有输入,只有返回值。get方法。
+
+Stream流:
+
+forkJoin: 工作窃取:性能好处理完任务,然后去其他线程获取任务执行。 
+
+```
+//使用fork/join来处理
+public static void test() throws ExecutionException, InterruptedException {
+    long start = System.currentTimeMillis();
+    ForkJoinPool pool = new ForkJoinPool();
+    ForkJoinTask<Long> task = new ForkJoinDemo(1L,100000000L);
+    ForkJoinTask<Long> submit = pool.submit(task);
+    Long result = submit.get();
+    System.out.println(result);
+    System.out.println(System.currentTimeMillis() - start);
+}
+//使用流来处理
+public static void test1() throws ExecutionException, InterruptedException {
+    long start = System.currentTimeMillis();
+    long result = LongStream.rangeClosed(0,100000000L).parallel().reduce(0,Long::sum);
+    System.out.println(result);
+    System.out.println(System.currentTimeMillis() - start);
+}
+```
+
+
+## 异步回调
+
+CompleteFuture:
+```
+public static void test2() throws ExecutionException, InterruptedException {
+    //无返回值
+    CompletableFuture<Void> completableFuture = CompletableFuture.runAsync(()->{
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(Thread.currentThread().getName());
+    });
+    System.out.println("===1===");
+    completableFuture.get();
+}
+
+public static void test3() throws ExecutionException, InterruptedException {
+    //有返回值
+    CompletableFuture<Integer> completableFuture = CompletableFuture.supplyAsync(()->{
+        System.out.println("===31===");
+        return 1;
+    });
+    System.out.println("===32===");
+    System.out.println(completableFuture.get());
+    System.out.println(completableFuture.whenComplete((t,u)->{
+        System.out.println("t:"+t); //返回正确的值
+        System.out.println("u:"+u); //错误的信息
+    }).exceptionally(e->{
+        System.out.println(e.getMessage());
+        return 1024; //返回错误结果
+    }).get());
+}
+```
+
+
+
 ## 参考文献
 [JVM内存模型（jvm 入门篇）](https://www.jianshu.com/p/a60d6ef0771b)
 [JVM内存模型](https://juejin.im/post/5ad5c0216fb9a028e014fb63)
