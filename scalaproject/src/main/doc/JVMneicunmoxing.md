@@ -729,6 +729,140 @@ public static void test3() throws ExecutionException, InterruptedException {
 }
 ```
 
+## 单例模式
+### 饿汉式
+```
+public class Hungry {
+    /**
+     * 可能浪费空间
+     */
+    private Hungry(){
+    }
+    private final static Hungry HUNGRY = new Hungry();
+    public static Hungry getInstance(){
+        return HUNGRY;
+    }
+}
+```
+### 懒汉式
+```
+public class LazyMan {
+    private LazyMan(){
+
+    }
+    private static LazyMan lazyMan;
+
+    public static LazyMan getInstance(){
+        if (lazyMan == null){
+            synchronized (LazyMan.class){
+                if (lazyMan == null){
+                    lazyMan = new LazyMan(); //不是原子操作
+                }
+            }
+        }
+        return lazyMan;
+    }
+}
+```
+### 静态内部类
+```
+public class Holder {
+    private Holder(){
+
+    }
+    public static Holder getInstance(){
+        return InnerClass.HOLDER;
+    }
+
+    public static class InnerClass{
+        private static final Holder HOLDER = new Holder();
+    }
+}
+```
+上面的方式都可以通过反射来破坏单例。
+
+反射不能破坏枚举单例。枚举有两个参数的构函数。
+
+```
+public enum  EnumSingle {
+    INSTANCE;
+    public static EnumSingle getInstance(){
+        return INSTANCE;
+    }
+}
+```
+
+
+CAS的ABA的问题使用AtomicStampedReference的时候，注意范型是一个包装类,注意对象应用的问题,特别是Integer。
+
+
+## 死锁
+代码:
+```
+public class DeadLockDemo {
+    public static void main(String[] args) {
+        new Thread(new MyThread("lockA","lockB"),"T1").start();
+        new Thread(new MyThread("lockB","lockA"),"T2").start();
+    }
+}
+
+class MyThread implements Runnable{
+    private String lockA;
+    private String lockB;
+
+    public MyThread(String lockA, String lockB) {
+        this.lockA = lockA;
+        this.lockB = lockB;
+    }
+
+    @Override
+    public void run() {
+        synchronized (lockA){
+            System.out.println(Thread.currentThread().getName()+" lock:"+lockA+"=>get"+lockB);
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (lockB){
+                System.out.println(Thread.currentThread().getName()+" lock:"+lockB+"=>get"+lockA);
+            }
+        }
+    }
+}
+```
+```
+2020-02-22 17:20:01
+Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.231-b11 mixed mode):
+Found one Java-level deadlock:
+=============================
+"T2":
+  waiting to lock monitor 0x00007f95ae014098 (object 0x000000076ac29d50, a java.lang.String),
+  which is held by "T1"
+"T1":
+  waiting to lock monitor 0x00007f95ae011a18 (object 0x000000076ac29d88, a java.lang.String),
+  which is held by "T2"
+
+Java stack information for the threads listed above:
+===================================================
+"T2":
+        at com.edu.algorithm.MyThread.run(DeadLockDemo.java:31)
+        - waiting to lock <0x000000076ac29d50> (a java.lang.String)
+        - locked <0x000000076ac29d88> (a java.lang.String)
+        at java.lang.Thread.run(Thread.java:748)
+"T1":
+        at com.edu.algorithm.MyThread.run(DeadLockDemo.java:31)
+        - waiting to lock <0x000000076ac29d88> (a java.lang.String)
+        - locked <0x000000076ac29d50> (a java.lang.String)
+        at java.lang.Thread.run(Thread.java:748)
+
+Found 1 deadlock.
+```
+
+## native
+扩展Java的使用。
+
+Java驱动调用打印机。
 
 
 ## 参考文献
