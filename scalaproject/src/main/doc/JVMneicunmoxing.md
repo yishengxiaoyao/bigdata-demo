@@ -446,12 +446,12 @@ hash 实现购物车
 Queue:LPush+RPop
 Blocking MQ:LPush+BRPop
 
- 微博和微信公众号信息流
- 关注大V
- LPush msg:18888(ID) 10086
- LPush msg:18888(ID) 10087
- 获取最新数据
- LRange msg:18888 0 5
+微博和微信公众号信息流
+关注大V
+LPush msg:18888(ID) 10086
+LPush msg:18888(ID) 10087
+获取最新数据
+LRange msg:18888 0 5
 
 ### Set 数据结构
 
