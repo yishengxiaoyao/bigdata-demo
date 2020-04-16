@@ -266,7 +266,7 @@ AnnotationAwareAspectJAutoProxyCreator
 
 ||@PropertySource|@ImportSource|
 |----|----|----|
-|区别|加载指定的配置文件|导入Spring的p配置文件,让配置文件里面的内容生效|
+|区别|加载指定的配置文件|导入Spring的配置文件,让配置文件里面的内容生效|
 
 
 读取配置文件的顺序:file:./config--> file: ./--> classpath:./config --> classpath: ./ (优先级由低到高)

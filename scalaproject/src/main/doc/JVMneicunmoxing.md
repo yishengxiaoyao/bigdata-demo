@@ -441,6 +441,10 @@ hash 实现购物车
 获取购物车所有商品:hget cart:1001
 
 ### list(链表)
+存储商品信息,或者订单信息,可以进行排序
+存储一些推送信息,用线程定时任务去跑,通知用户(给用户发送邮件)
+
+
 常用的数据结构
 栈:LPush + LPop -->FILO
 Queue:LPush+RPop
@@ -455,6 +459,8 @@ LRange msg:18888 0 5
 
 ### Set 数据结构
 
+防止用户重复注册
+
 #### 微信抽奖小程序
 10086添加抽奖
 SADD activity:1000 10086
@@ -468,6 +474,7 @@ srangemember activity:1000 2
 
 抽多个奖
 spop activity:1000 1 //抽中之后不会在set中存在
+
 
 #### 微信微博点赞、收藏、标签
 点赞
@@ -497,7 +504,11 @@ SISMEMBER CSET A
 A可能认识的人
 SDIFF CSET BSET //B和C的差集
 
+###ZSET 排序set
+游戏充值
 
+
+### GEO
 #### 附近的人
 添加一个或多个地理空间位置到sorted set
 geoadd key longitude latitude member [longitude latitude member]
