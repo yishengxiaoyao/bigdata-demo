@@ -87,7 +87,7 @@
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
-            <version>3.4.5-cdh5.7.0</version>
+            <version>3.4.5-cdh5.7.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -120,7 +120,7 @@
 
     </dependencies>
 
-    <build>
+   <!-- <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
         <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>
@@ -160,8 +160,8 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
-    <reporting>
+    </build>-->
+   <!-- <reporting>
         <plugins>
             <plugin>
                 <groupId>org.scala-tools</groupId>
@@ -171,5 +171,5 @@
                 </configuration>
             </plugin>
         </plugins>
-    </reporting>
+    </reporting>-->
 </project>
