@@ -68,7 +68,7 @@ initializeBean //
 >   * 指定init-method和destroy-method 
 >* 通过bean实现InitializingBean(定义初始化逻辑)、DisposableBean(销毁逻辑)
 >* 可以通过jsr250:
->   * @PostConstructor: 在bean创建完成之前并且属性赋值完成,来执行初始化
+>   * @PostConstructor:在bean创建完成之前并且属性赋值完成,来执行初始化
 >   * @PreDestroy:在容器销毁bean之前通知我们j进行清理工作
 >* BeanPostProcessor:bean的后置处理
 >   * 在bean初始化前后进行一些处理工作

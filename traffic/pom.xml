@@ -21,7 +21,7 @@
         <java.version>1.8</java.version>
         <scala.version>2.11.8</scala.version>
         <jdk.version>1.8</jdk.version>
-        <spark.version>2.2.0</spark.version>
+        <spark.version>2.3.3</spark.version>
         <mysql.connector.version>5.1.47</mysql.connector.version>
         <joda.time.version>2.9.9</joda.time.version>
         <commons.configuration.version>2.5</commons.configuration.version>

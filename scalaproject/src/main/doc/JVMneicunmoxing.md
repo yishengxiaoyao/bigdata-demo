@@ -358,7 +358,7 @@ where code = #{code} and amount - #{buys} >=  0
 >* 基于redis实现乐观锁
 利用watch指令在redis事务中提供cas能力。
 
-wtach key #监控key
+watch key #监控key
 multi # 开启事务
 set key value # 设置值
 exec # 提交事务
@@ -444,7 +444,6 @@ hash 实现购物车
 存储商品信息,或者订单信息,可以进行排序
 存储一些推送信息,用线程定时任务去跑,通知用户(给用户发送邮件)
 
-
 常用的数据结构
 栈:LPush + LPop -->FILO
 Queue:LPush+RPop
@@ -505,7 +504,7 @@ A可能认识的人
 SDIFF CSET BSET //B和C的差集
 
 ###ZSET 排序set
-游戏充值
+游戏充值排行榜
 
 
 ### GEO
