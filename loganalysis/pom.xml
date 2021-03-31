@@ -16,7 +16,7 @@
         <spark.streaming.kafka.version>2.0.2</spark.streaming.kafka.version>
         <kafka.version>0.10.0-kafka-2.1.1</kafka.version>
         <influxdb.version>2.15</influxdb.version>
-        <guava.version>27.1-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
     </properties>
 
     <repositories>
