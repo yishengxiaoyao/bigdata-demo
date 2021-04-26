@@ -34,7 +34,7 @@
         <flume.version>1.7.0</flume.version>
         <hive.version>2.3.4</hive.version>
         <mysql.connector.version>8.0.20</mysql.connector.version>
-        <commons.version>2.6</commons.version>
+        <commons.version>2.7</commons.version>
     </properties>
     <dependencyManagement>
         <dependencies>
