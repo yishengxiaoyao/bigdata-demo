@@ -25,7 +25,7 @@
         <kafka.version>0.10.2.2</kafka.version>
         <hbase.version>1.2.0-cdh5.7.0</hbase.version>
         <mysql.connector.version>8.0.20</mysql.connector.version>
-        <hadoop.version>2.6.0-cdh5.7.0</hadoop.version>
+        <hadoop.version>2.7.0</hadoop.version>
         <hive.version>2.1.1-cdh6.3.3</hive.version>
         <commons.lang3.version>3.9</commons.lang3.version>
         <joda.time.version>2.10.2</joda.time.version>
